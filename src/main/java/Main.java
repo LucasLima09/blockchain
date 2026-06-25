@@ -1,4 +1,5 @@
 import infra.persistence.ArquivoJsonRepository;
+import infra.security.GeradorMD5;
 import infra.security.GeradorSHA256;
 import repository.ArmazenadorRepository;
 import service.AlgoritmoHash;
