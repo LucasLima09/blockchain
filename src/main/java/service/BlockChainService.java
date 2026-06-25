@@ -10,9 +10,11 @@ public class BlockChainService {
 
     private final List<Bloco> chain = new ArrayList<>();
     private final ArmazenadorRepository armazenadorRepository;
+    private final AlgoritmoHash algoritmoHash;
 
-    public BlockChainService(ArmazenadorRepository armazenadorRepository) {
+    public BlockChainService(ArmazenadorRepository armazenadorRepository, AlgoritmoHash algoritmoHash) {
         this.armazenadorRepository = armazenadorRepository;
+        this.algoritmoHash = algoritmoHash;
     }
 
     public void carregarArquivo(){
@@ -26,7 +28,7 @@ public class BlockChainService {
         long time = System.currentTimeMillis();
 
         String dadosParaHash = proximoId + conteudo + hashAnterior + time;
-        String hashGerado = GeradorHash.aplicarSHA256(dadosParaHash);
+        String hashGerado = algoritmoHash.gerar(dadosParaHash);
 
         Bloco novoBloco = new Bloco(proximoId, conteudo, hashAnterior, hashGerado, time);
         chain.add(novoBloco);
@@ -40,7 +42,7 @@ public class BlockChainService {
             Bloco atual = chain.get(i);
 
             String dadosParaVerificar = atual.getId() + atual.getConteudo() + atual.getHashAnterior() + atual.getTime();
-            String hashRecalculado = GeradorHash.aplicarSHA256(dadosParaVerificar);
+            String hashRecalculado = algoritmoHash.gerar(dadosParaVerificar);
 
             if(!atual.getHash().equals(hashRecalculado)){
                 System.out.println("FALHA DETECTADA: O Bloco ID [" + atual.getId() + "] foi violado diretamente na base de dados!");
